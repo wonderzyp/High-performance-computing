@@ -2,6 +2,7 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <future>
 
 
 /**
@@ -55,54 +56,68 @@
 // }
 
 
+
 /**
 * @brief std::unique_lock 可调用lock和unlock
 * ****************************************************************************************/
-int v=1;
+// int v=1;
 
-void critical_section(int change_v){
-  static std::mutex mtx;
-  std::unique_lock<std::mutex> lock(mtx);
-
-  v = change_v;
-  std::cout<<v<<std::endl;
-  lock.unlock();
-
-// 如果在此处设置3s的休眠时间
-// 当线程t1休眠时,线程t2可获取lock锁,并输出3
-  std::this_thread::sleep_for(std::chrono::seconds(3));
-
-  lock.lock();
-  v+=1;
-  std::cout<<v<<std::endl;
-}
-
-// 不进行上锁
 // void critical_section(int change_v){
+//   static std::mutex mtx;
+//   std::unique_lock<std::mutex> lock(mtx);
 
 //   v = change_v;
 //   std::cout<<v<<std::endl;
+//   lock.unlock();
 
+// // 如果在此处设置3s的休眠时间
+// // 当线程t1休眠时,线程t2可获取lock锁,并输出3
+//   std::this_thread::sleep_for(std::chrono::seconds(3));
+
+//   lock.lock();
 //   v+=1;
 //   std::cout<<v<<std::endl;
 // }
 
+// // 不进行上锁
+// // void critical_section(int change_v){
+
+// //   v = change_v;
+// //   std::cout<<v<<std::endl;
+
+// //   v+=1;
+// //   std::cout<<v<<std::endl;
+// // }
+
+// int main(){
+//   std::thread t1(critical_section,1), t2(critical_section,3);
+
+//   t1.join();
+//   t2.join();
+
+//   return 0;
+// }
 
 
+/**
+* @brief std::future 特性
+  获取异步任务的结果，可理解为一种线程同步手段
+* ****************************************************************************************/
+int main()
+{
+  // std::packaged_task 可用于封装任何可调用的目标, 进而实现异步调用
+  // std::packaged_task 的模板参数为欲封装函数的类型
+  std::packaged_task<int()> task([](){return 7;});
 
+  std::future<int> result = task.get_future();
+  std::thread(std::move(task)).detach();
+  std::cout << "waiting...\n";
 
-int main(){
-  std::thread t1(critical_section,1), t2(critical_section,3);
+  result.wait(); //设置屏障，阻塞直到期物完成
 
-  t1.join();
-  t2.join();
-
+  std::cout<<"finished!\n"<<"future result is "<<result.get()<<std::endl;
   return 0;
 }
-
-
-
-
 
 
 

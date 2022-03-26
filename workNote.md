@@ -2,9 +2,6 @@
 ---
 关键词: mutex, RAII, lock_guard, unique_lock
 
-
-
-
 `mutex`是并发技术的核心之一, c++11引入mutex相关类，且置于`<mutex>`头文件内
 mutex可保护共享数据,避免数据被多个线程同时访问
 调用mutex的线程,自lock或try_lock起,至unlock,该线程占有mutex
@@ -23,11 +20,26 @@ std::unique_lock相对于std::lock_guard出现,该类型的对象以*独占所�
 
 std::unique_lock可显式调用lock和unlock(lock_guard不行),**可缩小锁的范围,提升并发度**
 
-
-
-
-
-
-
-
 > pthread库不是Linux默认的库，编译时添加-lpthread参数
+
+
+thread
+---
+单个执行线程，**线程允许多个函数同时执行**
+线程在构建关联的线程对象时，**立即开始执行**
+顶层函数可通过`std::promise`或**修改共享变量**将返回值或异常传递给调用方
+
+- detach：从thread对象分离执行线程，调用detach后,`*this`不再占有线程
+
+
+
+future
+---
+用于获取异步任务的返回值
+
+promise：存储一个值，以进行异步获取
+
+
+期物：线程A中启动线程B，需要但不立即需要B的返回结果
+即A希望在**未来某个时刻**获得B的返回值
+
