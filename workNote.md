@@ -2,6 +2,20 @@
 ---
 关键词: mutex, RAII, lock_guard, unique_lock
 
+`#include <thread>`管理线程的函数及类，不包含保护共享数据的类
+
+每个线程需要一个**初始函数**`initial function`
+初始线程是`main()`，其余线程可在std::thread对象的构造函数中指定
+
+创建新线程之后，初始线程依旧继续进行，可能会在创建的新线程结束前结束
+因此，调用`join()`，导致调用线程等待与`std::thread`对象相关联的线程
+
+启动线程
+---
+线程在创建`std::thread`对象时启动
+`thread`可调用类型构造
+
+
 `mutex`是并发技术的核心之一, c++11引入mutex相关类，且置于`<mutex>`头文件内
 mutex可保护共享数据,避免数据被多个线程同时访问
 调用mutex的线程,自lock或try_lock起,至unlock,该线程占有mutex

@@ -1,5 +1,12 @@
-Learning Modern Cpp
+本仓库通过各类实例学习`C++11`及以后的新特性
+===
+
+并发编程(concurrency文件夹内)
 ---
 
-并发与多线程
+STL
+---
+
+
+Lambda表达式
 ---
