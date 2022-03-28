@@ -1,26 +1,3 @@
-并发编程
----
-关键词: mutex, RAII, lock_guard, unique_lock
-
-`#include <thread>`管理线程的函数及类，不包含保护共享数据的类
-
-每个线程需要一个**初始函数**`initial function`
-初始线程是`main()`，其余线程可在std::thread对象的构造函数中指定
-
-创建新线程之后，初始线程依旧继续进行，可能会在创建的新线程结束前结束
-因此，调用`join()`，导致调用线程等待与`std::thread`对象相关联的线程
-
-启动线程
----
-线程在创建`std::thread`对象时启动
-`thread`可调用类型构造，将含有函数调用符类型的实例传入`thread`类，替换默认构造函数
-
-
-
-
-
-
-
 `mutex`是并发技术的核心之一, c++11引入mutex相关类，且置于`<mutex>`头文件内
 mutex可保护共享数据,避免数据被多个线程同时访问
 调用mutex的线程,自lock或try_lock起,至unlock,该线程占有mutex
@@ -62,3 +39,25 @@ promise：存储一个值，以进行异步获取
 期物：线程A中启动线程B，需要但不立即需要B的返回结果
 即A希望在**未来某个时刻**获得B的返回值
 
+
+C++ most vexing parse
+---
+编译器无法分清两种情况：
+- 对象参数的创建
+- 函数类型的规约
+
+```cpp
+//eg 1: 
+int i(int(my_db));
+// 解释1：用强制类型转换后的my_db初始化变量i
+// 解释2：声明函数 int i(int my_db);  默认采取
+// c++允许参数被多余括号包围
+
+//eg 2:
+struct Timer{};
+struct TimeKeeper{};
+
+TimeKeeper t(Timer());
+// 解释1：使用匿名类Timer()初始化t
+// 解释2：声明函数t，其有一个匿名参数，该参数类型为"无参数、返回类型为Timer"的函数指针，函数t的返回类型是TimeKeeper的类对象
+```
