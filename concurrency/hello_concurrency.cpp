@@ -21,7 +21,7 @@ int main()
   Hello_class myclass;
   std::thread t_class(myclass); // 传入functor
 
-  std::thread t_lambda([](){ std::cout<<"hello cocurrent world created by lambda\n";}); // lambda
+  std::thread t_lambda([]{ std::cout<<"hello cocurrent world created by lambda\n";}); // lambda
 
   t.join();
   t_class.join();

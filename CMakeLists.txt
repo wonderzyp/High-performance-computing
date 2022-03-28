@@ -5,6 +5,7 @@ project(modern_cpp)
 
 foreach(subdir
   concurrency
+  # common
 )
 
 add_subdirectory(${subdir})
