@@ -2,21 +2,22 @@
 #include <vector>
 #include <thread>
 #include <cmath>
+#include <chrono>
 using std::vector;
 
 
 void myfun(){
-  double i;
-  for (i=0; i<6; ++i){
+  double j=12.12;
+  for (int i=1; i<200; ++i){
+    // do something to waste time
     i = i+1;
-    i = std::sqrt(i);
+    j = std::sqrt(i);
   }
-  printf("%0.6f ",i);
+  printf("%0.6f ",j);
 };
 
-void parall_fun(vector<double>& data) {
+void parall_fun(int len) {
 
-  unsigned int const len = data.size();
   if (len==0) return;
 
   unsigned int const min_per_threads = 25; // 每个线程设置最低处理个数，避免造成浪费
@@ -43,7 +44,6 @@ void parall_fun(vector<double>& data) {
 int main()
 {
   std::cout<< std::thread::hardware_concurrency()<< std::endl;
-  std::vector<double> data(61,0);
-  parall_fun(data);
+  parall_fun(200);
   return 0;
 }

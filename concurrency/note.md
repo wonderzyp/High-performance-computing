@@ -73,7 +73,14 @@ t1=std::thread(some_other_function);    // 3
 
 运行时决定线程数量
 ---
+`std::thread::hardware_concurrency()`：返回硬件核心数
+可通过设置单个线程处理的最小数据量，避免切换上下文成本大于计算成本
+`max_threads = (length + min_per_thread-1)/min_per_thread`
 
+线程标识
+---
+`std::this_thread::get_id()`或对thread对象调用成员函数`.get_id()`
+C++标准要求ID相等的线程必须有相同的输出
 
 
 
