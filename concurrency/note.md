@@ -71,6 +71,10 @@ t1=std::thread(some_other_function);    // 3
 - 不能已关联线程的thread类重复绑定线程
 > 无法通过赋新值给`thread`对象来丢弃线程
 
+运行时决定线程数量
+---
+
+
 
 
 
