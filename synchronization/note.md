@@ -29,6 +29,25 @@
 
 future-期望
 ---
+future:提供访问异步操作结果的机制，通过async, packaged_task或promise创建
+可查询、等待或从std::future中提取值，若依旧未提供值，可能会**阻塞**
+
+async使用时不需要绑定线程
+packaged_task和promise可绑定
+
+#### `std::packaged_task`
+将可调用对象进行包装
+
+#### `std::promise`
+提供存储值或异常的设施，每个promise与共享状态关联
+promise可对共享状态做三件事：
+- 使就绪
+- 释放
+- 抛弃
+
+
+
+
 当一个线程需等待一个特定的一次性事件时
 在等待任务期间，可先执行其余的一些任务，直到对应的任务触发
 
@@ -37,13 +56,20 @@ future-期望
 
 `std::future`的实例仅与一个指定事件相关联
 
-`std::async`：启动异步任务，会返回一个`std::future`对象，该对象持有最终计算出的结果，需要值时调用`get`成员函数
+`std::launch::async`
+`std::launch::deferred`：函数调用被延迟到`wait`或`get`函数调用时执行
 
-``
+std::packaged_task
+---
+用于包装任何可调用**callable**目标（函数、lambda表达式、bind表达式或其余函数对象），使得可异步调用，其返回值或所抛异常存储于std::future对象访问的共享状态中
 
 
-
-
+`std::promises`：
+上下文频繁切换（线程数量超出硬件的可接受并发数）
+每个promise与共享状态关联，可对共享状态做三件事：
+1. 使就绪：
+2. 释放：放弃对共享状态的引用
+3. 抛弃：
 
 
 
