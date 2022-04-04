@@ -18,16 +18,17 @@ class threadsafe_stack
 {
 private:
   std::stack<T> data;
-  mutable std::mutex m;
+  mutable std::mutex m; // 互斥量m保证基本的线程安全，同一时刻仅一个线程可访问到数据
 public:
   threadsafe_stack(){};
-  threadsafe_stack(const threadsafe_stack& other) // 拷贝构造函数，访问前上锁
+  threadsafe_stack(const threadsafe_stack& other) // 拷贝构造函数，拷贝前上锁
   {
+    // 使用互斥量保证复制结构的正确性，此方式优于成员初始化列表
     std::lock_guard<std::mutex> lock(other.m);
     data = other.data;
   }
 
-  threadsafe_stack& operator= (const threadsafe_stack&) = delete; // 不允许赋值构造
+  threadsafe_stack& operator= (const threadsafe_stack&) = delete; //拷贝一个互斥量没有意义
 
   void push(T new_value)
   {
@@ -35,12 +36,12 @@ public:
     data.push(std::move(new_value));
   }
 
-  std::shared_ptr<T> pop()
+  std::shared_ptr<T> pop()  // shared_ptr避免内存管理
   {
     std::lock_guard<std::mutex> lock(m);
-    if (data.empty()) throw empty_stack();
+    if (data.empty()) throw empty_stack(); // pop 前检查是否为空
 
-    std::shared_ptr<T> const res(std::make_shared<T>(std::move(data.top())));
+    std::shared_ptr<T> const res(std::make_shared<T>(std::move(data.top()))); // 修改堆栈前，分配返回值
 
     data.pop();
     return res;
@@ -61,6 +62,8 @@ public:
     return data.empty();
   }
 };
+
+// 将top和pop融合了，避免竞争，通过shared_ptr防止丢失top值
 
 
 
