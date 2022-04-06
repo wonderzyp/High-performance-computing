@@ -49,6 +49,7 @@ int main()
     // 以默认策略调用 x.foo(42, "Hello") ：
     // 可能同时打印 "Hello 42" 或延迟执行
     auto a1 = std::async(&X::foo, &x, 42, "Hello");
+    
     // 以 deferred 策略调用 x.bar("world!")
     // 调用 a2.get() 或 a2.wait() 时打印 "world!"
     auto a2 = std::async(std::launch::deferred, &X::bar, x, "world!");
