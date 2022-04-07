@@ -6,6 +6,7 @@
 #include <stack>
 #include <future>
 #include <thread>
+#include <mutex>
 
 
 struct empty_stack : std::exception
@@ -41,6 +42,9 @@ public:
     std::lock_guard<std::mutex> lock(m);
     if (data.empty()) throw empty_stack(); // pop 前检查是否为空
 
+    // 创建res可能会抛出异常
+    // 1. 没有足够的内存调用make_shared
+    // 2. 拷贝或移动到新分配的内存中返回时抛出异常
     std::shared_ptr<T> const res(std::make_shared<T>(std::move(data.top()))); // 修改堆栈前，分配返回值
 
     data.pop();
