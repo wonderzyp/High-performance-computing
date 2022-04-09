@@ -25,6 +25,7 @@ public:
     data_cond.notify_one(); // 
   }
 
+
   void wait_and_pop(T& value)
   {
     std::unique_lock<std::mutex> lk(mut);
@@ -50,5 +51,22 @@ public:
     value = std::move(*data_queue.front());
     data_queue.pop();
     return true;
+  }
+
+  std::shared_ptr<T> try_pop()
+  {
+    std::lock_guard<std::mutex> lk(mut);
+    if (data_queue.empty())
+      return std::shared_ptr<T>();
+    
+    std::shared_ptr<T> res(std::make_shared<T>(std::move(data_queue.front())));
+    data_queue.pop();
+    return res;
+  }
+
+  bool empty() const
+  {
+    std::lock_guard<std::mutex> lk(mut);
+    return data_queue.empty();
   }
 };
