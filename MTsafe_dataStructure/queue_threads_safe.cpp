@@ -94,22 +94,27 @@ class queue
 private:
   struct node
   {
-    T data;
+    // T data;
+    std::shared_ptr<T> data;
     std::unique_ptr<node> next;
-
-    node(T data_) : data(std::move(data_)){};
   };
 
+  std::mutex head_mutex;
   std::unique_ptr<node> head;
+
+  std::mutex tail_mutex;
   node* tail;
 
 public:
-  queue(){};
+  queue():
+    head(new node), tail(head.get())
+  {}
+
   queue(const queue& other) = delete;
   queue& operator=(const queue& other) = delete;
 
   std::shared_ptr<T> try_pop(){
-    if (!head){
+    if (head.get()==tail){
       return std::shared_ptr<T>();
     }
 
@@ -117,6 +122,20 @@ public:
     std::unique_ptr<node> const old_head = std::move(head);
     head = std::move(old_head->next);
     return res;
+  }
+
+  void push(T new_value){
+    std::unique_ptr<node> p(new node(std::move(new_value)));
+
+    node* const new_tail = p.get(); // 返回被管理对象的指针
+
+    if (tail){
+      tail->next = std::move(p);
+    } 
+    else {
+      head = std::move(p);
+    }
+    tail = new_tail;
   }
 };
 
