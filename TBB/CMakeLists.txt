@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE Release)
 
 project(main LANGUAGES CXX)
 
-add_executable(main first.cpp)
+add_executable(main test.cpp)
 
 find_package(TBB REQUIRED)
 target_link_libraries(main PUBLIC TBB::tbb)

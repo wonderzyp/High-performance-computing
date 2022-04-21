@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
 #include <tbb/parallel_invoke.h>
+#include <tbb/task_group.h>
+#include <thread>
+#include <chrono>
+
 using namespace std;
 
 /**
@@ -27,3 +31,31 @@ int main(){
 }
 #endif
 
+/**
+* @brief 任务组
+* ****************************************************************************************/
+void download(std::string file){
+  for(int i=0; i<10; ++i){
+    cout<<"Downloading "<<file<<"("<<i*10<<"%)..."<<endl;
+    this_thread::sleep_for(chrono::milliseconds(400));
+  }
+  cout<<"Download complete: "<<file<<endl;
+}
+
+void interact(){
+  string name;
+  cin>>name;
+  cout<<"hi, "<<name<<endl;
+}
+
+int main(){
+  tbb::task_group tg;
+  tg.run([&]{
+    download("hello.zip");
+  });
+  tg.run([&]{
+    interact();
+  });
+  tg.wait();
+  return 0;
+}
